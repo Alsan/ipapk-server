@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{.bundle.CreatedAt | formatTime }}
+{{.bundle.Size | formatBinary }}
+Downloads: {{.bundle.Downloads}}
+</body>
+</html>
