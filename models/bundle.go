@@ -111,7 +111,8 @@ func (bundle *Bundle) UpdateDownload() {
 func (bundle *Bundle) GetVersions() (map[string]int, error) {
 	results := map[string]int{}
 	rows, err := orm.Table("bundles").Select("version, count(build) AS builds").
-		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, bundle.PlatformType).Group("version").Rows()
+		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, bundle.PlatformType).Group("version").
+		Order("version desc").Rows()
 	if err != nil {
 		return nil, err
 	}
