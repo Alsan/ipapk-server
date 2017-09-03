@@ -4,7 +4,8 @@
     line-height: 80px !important;
 }
 .weui-media-box__hd img {
-    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 15px;
 }
 .weui-media-box__desc {
     color: #353535 !important;
@@ -24,6 +25,13 @@
 }
 .weui-cell__ft {
     height: 25px;
+}
+.weui-cell__hd img {
+    width:20px;
+    margin-right:5px;
+    display:block;
+    border: 1px solid #e5e5e5;
+    border-radius:5px
 }
 .qr-wrapper {
     margin: -35px auto 0;
