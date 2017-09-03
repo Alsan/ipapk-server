@@ -110,8 +110,8 @@ func (bundle *Bundle) UpdateDownload() {
 
 func (bundle *Bundle) GetVersions() (map[string]int, error) {
 	results := map[string]int{}
-	rows, err := orm.Table("bundles").Select("version, count(build) AS builds").
-		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, bundle.PlatformType).Group("version").
+	rows, err := orm.Table("bundles").Select("version, count(DISTINCT build) AS builds").
+		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, int(bundle.PlatformType)).Group("version").
 		Order("version desc").Rows()
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (bundle *Bundle) GetVersions() (map[string]int, error) {
 
 func (bundle *Bundle) GetBuilds(version string) ([]*Bundle, error) {
 	var bundles []*Bundle
-	err := orm.Where("version = ? AND platform_type = ?", version, bundle.PlatformType).
+	err := orm.Where("version = ? AND platform_type = ?", version, int(bundle.PlatformType)).
 		Order("created_at desc").Find(&bundles).Error
 
 	return bundles, err
