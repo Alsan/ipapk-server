@@ -107,3 +107,31 @@ func (bundle *Bundle) UpdateDownload() {
 	bundle.UpdateBundle("downloads", val)
 	rpl.Unlock()
 }
+
+func (bundle *Bundle) GetVersions() (map[string]int, error) {
+	results := map[string]int{}
+	rows, err := orm.Table("bundles").Select("version, count(build) AS builds").
+		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, bundle.PlatformType).Group("version").Rows()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var version string
+		var builds int
+		if err := rows.Scan(&version, &builds); err != nil {
+			return nil, err
+		}
+		results[version] = builds
+	}
+	return results, nil
+}
+
+func (bundle *Bundle) GetBuilds(version string) ([]*Bundle, error) {
+	var bundles []*Bundle
+	err := orm.Where("version = ? AND platform_type = ?", version, bundle.PlatformType).
+		Order("created_at desc").Find(&bundles).Error
+
+	return bundles, err
+}

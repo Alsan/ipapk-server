@@ -2,11 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>内测应用分发服务</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"/>
+    <link rel="stylesheet" href="/ipapk/static/css/app.min.css">
 </head>
 <body>
-{{.bundle.CreatedAt | formatTime }}
-{{.bundle.Size | formatBinary }}
-Downloads: {{.bundle.Downloads}}
+<div class="container">
+    <div class="page">
+        <div class="weui-panel weui-panel_access">
+            <div class="weui-panel__bd">
+                <div class="weui-media-box weui-media-box_appmsg">
+                    <div class="weui-media-box__hd">
+                        <img class="weui-media-box__thumb" src="{{ .iconUrl }}" alt="">
+                    </div>
+                    <div class="weui-media-box__bd">
+                        <p class="weui-media-box__desc">应用名: {{ .bundle.Name }}</p>
+                        <p class="weui-media-box__desc">版本: {{ .bundle.Version }} ({{ .bundle.Build }})</p>
+                        <p class="weui-media-box__desc">平台: {{ .bundle.PlatformType }}</p>
+                        <p class="weui-media-box__desc">大小: {{.bundle.Size | formatBinary }}</p>
+                        <p class="weui-media-box__desc">发布时间: {{.bundle.CreatedAt | formatTime }}</p>
+                        <p class="weui-media-box__desc">安装次数: {{.bundle.Downloads }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="weui-panel__ft">
+                <a href="/ipapk/bundles/{{.bundle.UUID}}/versions" class="weui-cell weui-cell_access weui-cell_link">
+                    <div class="weui-cell__bd">历史版本</div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+            </div>
+        </div>
+        <div class="page__bd page__bd_spacing">
+            <a href="{{ .installUrl | safeURL }}" class="weui-btn weui-btn_plain-primary">在线安装</a>
+            <div class="weui-loadmore weui-loadmore_line">
+                <span class="weui-loadmore__tips">或扫一扫</span>
+            </div>
+            <div class="qr-wrapper">
+                <div class="qr">
+                    <img src="{{ .qrCodeUrl }}">
+                </div>
+            </div>
+        </div>
+        <div class="weui-footer weui-footer_fixed-bottom">
+            <p class="weui-footer__text">Copyright &copy; ipapk</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

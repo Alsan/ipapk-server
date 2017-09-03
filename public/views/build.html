@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>内测应用分发服务</title>
+    <!-- 引入 WeUI -->
+    <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"/>
+    <link rel="stylesheet" href="/ipapk/static/css/app.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="page">
+        <div class="weui-cells__title">历史版本</div>
+        <div class="weui-cells">
+            {{ range .builds }}
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <img src="{{ .IconUrl }}" alt="" style="width:20px;margin-right:5px;display:block">
+                </div>
+                <div class="weui-cell__bd">
+                    <p>{{ .Version }} ({{ .Build }})</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <a href="{{ .InstallUrl | safeURL }}" class="weui-btn weui-btn_mini weui-btn_primary">安装</a>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+        <div class="weui-footer weui-footer_fixed-bottom">
+            <p class="weui-footer__text">Copyright &copy; ipapk</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

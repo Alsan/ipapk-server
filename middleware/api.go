@@ -73,30 +73,6 @@ func Upload(c *gin.Context) {
 	})
 }
 
-func GetBundle(c *gin.Context) {
-	uuid := c.Param("uuid")
-
-	bundle, err := models.GetBundleByUUID(uuid)
-	if err != nil {
-		return
-	}
-
-	url := location.Get(c)
-
-	c.JSON(http.StatusOK, &serializers.BundleJSON{
-		UUID:       uuid,
-		Name:       bundle.Name,
-		Platform:   bundle.PlatformType.String(),
-		BundleId:   bundle.BundleId,
-		Version:    bundle.Version,
-		Build:      bundle.Build,
-		InstallUrl: bundle.GetInstallUrl(url.String()),
-		QRCodeUrl:  url.String() + "/qrcode/" + uuid,
-		IconUrl:    url.String() + "/icon/" + uuid + ".png",
-		Downloads:  bundle.Downloads,
-	})
-}
-
 func QRCode(c *gin.Context) {
 	uuid := c.Param("uuid")
 
@@ -107,7 +83,7 @@ func QRCode(c *gin.Context) {
 
 	url := location.Get(c)
 
-	data := fmt.Sprintf("%v/detail/%v?_t=%v", url.String(), bundle.UUID, time.Now().Unix())
+	data := fmt.Sprintf("%v/bundles/%v?_t=%v", url.String(), bundle.UUID, time.Now().Unix())
 	img, err := qrcode.Encode(data, qrcode.Medium, -5)
 	if err != nil {
 		return
@@ -116,7 +92,7 @@ func QRCode(c *gin.Context) {
 	c.Data(http.StatusOK, "image/png", img)
 }
 
-func Detail(c *gin.Context) {
+func GetBundle(c *gin.Context) {
 	uuid := c.Param("uuid")
 
 	bundle, err := models.GetBundleByUUID(uuid)
@@ -127,9 +103,66 @@ func Detail(c *gin.Context) {
 	url := location.Get(c)
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"bundle":    bundle,
-		"qrCodeUrl": url.String() + "/qrcode/" + bundle.UUID,
-		"iconUrl":   url.String() + "/icon/" + bundle.UUID + ".png",
+		"bundle":     bundle,
+		"installUrl": bundle.GetInstallUrl(url.String()),
+		"qrCodeUrl":  url.String() + "/qrcode/" + bundle.UUID,
+		"iconUrl":    url.String() + "/icon/" + bundle.UUID + ".png",
+	})
+}
+
+func GetVersions(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	bundle, err := models.GetBundleByUUID(uuid)
+	if err != nil {
+		return
+	}
+
+	versions, err := bundle.GetVersions()
+	if err != nil {
+		return
+	}
+
+	c.HTML(http.StatusOK, "version.html", gin.H{
+		"versions": versions,
+		"uuid":     bundle.UUID,
+	})
+}
+
+func GetBuilds(c *gin.Context) {
+	uuid := c.Param("uuid")
+	version := c.Param("ver")
+
+	bundle, err := models.GetBundleByUUID(uuid)
+	if err != nil {
+		return
+	}
+
+	builds, err := bundle.GetBuilds(version)
+	if err != nil {
+		return
+	}
+
+	url := location.Get(c)
+
+	var bundles []serializers.BundleJSON
+	for _, v := range builds {
+		bundles = append(bundles, serializers.BundleJSON{
+			UUID:       v.UUID,
+			Name:       v.Name,
+			Platform:   v.PlatformType.String(),
+			BundleId:   v.BundleId,
+			Version:    v.Version,
+			Build:      v.Build,
+			InstallUrl: v.GetInstallUrl(url.String()),
+			QRCodeUrl:  url.String() + "/qrcode/" + uuid,
+			IconUrl:    url.String() + "/icon/" + uuid + ".png",
+			Downloads:  v.Downloads,
+		})
+	}
+
+	c.HTML(http.StatusOK, "build.html", gin.H{
+		"builds": bundles,
 	})
 }
 

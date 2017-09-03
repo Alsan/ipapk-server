@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
+	"github.com/phinexdaz/ipapk-server/conf"
 	"github.com/phinexdaz/ipapk-server/middleware"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/templates"
@@ -16,6 +17,7 @@ import (
 
 func main() {
 	models.InitDB()
+	conf.Init("config.json")
 
 	router := gin.Default()
 	router.Use(location.New(location.Config{
@@ -30,15 +32,16 @@ func main() {
 	v1.Static("static", "public/static")
 
 	v1.POST("/upload", middleware.Upload)
-	v1.GET("/bundles/:uuid", middleware.GetBundle)
 	v1.GET("/qrcode/:uuid", middleware.QRCode)
-	v1.GET("/detail/:uuid", middleware.Detail)
 	v1.GET("/plist/:uuid", middleware.Plist)
 	v1.GET("/ipa/:uuid", middleware.DownloadIPA)
 	v1.GET("/apk/:uuid", middleware.DownloadAPK)
+	v1.GET("/bundles/:uuid", middleware.GetBundle)
+	v1.GET("/bundles/:uuid/versions", middleware.GetVersions)
+	v1.GET("/bundles/:uuid/versions/:ver", middleware.GetBuilds)
 
 	srv := &http.Server{
-		Addr:    "127.0.0.1:8090",
+		Addr:    conf.AppConfig.Addr(),
 		Handler: router,
 	}
 
