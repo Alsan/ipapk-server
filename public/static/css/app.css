@@ -22,6 +22,9 @@
 .weui-loadmore {
     margin: 1.5em auto !important;
 }
+.weui-cell__ft {
+    height: 25px;
+}
 .qr-wrapper {
     margin: -35px auto 0;
 }
