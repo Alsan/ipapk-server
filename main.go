@@ -37,8 +37,8 @@ func main() {
 	v1.GET("/ipa/:uuid", middleware.DownloadIPA)
 	v1.GET("/apk/:uuid", middleware.DownloadAPK)
 	v1.GET("/bundles/:uuid", middleware.GetBundle)
-	v1.GET("/bundles/:uuid/versions", middleware.GetVersions)
-	v1.GET("/bundles/:uuid/versions/:ver", middleware.GetBuilds)
+	v1.GET("/versions/:uuid", middleware.GetVersions)
+	v1.GET("/versions/:uuid/:ver", middleware.GetBuilds)
 
 	srv := &http.Server{
 		Addr:    conf.AppConfig.Addr(),
