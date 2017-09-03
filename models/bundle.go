@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -108,11 +109,11 @@ func (bundle *Bundle) UpdateDownload() {
 	rpl.Unlock()
 }
 
-func (bundle *Bundle) GetVersions() (map[string]int, error) {
-	results := map[string]int{}
+func (bundle *Bundle) GetVersions() (VersionInfo, error) {
+	results := make(VersionInfo, 0)
+
 	rows, err := orm.Table("bundles").Select("version, count(DISTINCT build) AS builds").
-		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, int(bundle.PlatformType)).Group("version").
-		Order("version desc").Rows()
+		Where("bundle_id = ? AND platform_type= ?", bundle.BundleId, int(bundle.PlatformType)).Group("version").Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -124,15 +125,17 @@ func (bundle *Bundle) GetVersions() (map[string]int, error) {
 		if err := rows.Scan(&version, &builds); err != nil {
 			return nil, err
 		}
-		results[version] = builds
+		results = append(results, vInfo{version, builds})
 	}
+	sort.Sort(results)
+
 	return results, nil
 }
 
 func (bundle *Bundle) GetBuilds(version string) ([]*Bundle, error) {
 	var bundles []*Bundle
-	err := orm.Where("version = ? AND platform_type = ?", version, int(bundle.PlatformType)).
-		Order("created_at desc").Find(&bundles).Error
+	err := orm.Where("version = ? AND platform_type = ?", version, int(bundle.PlatformType)).Group("build").
+		Order("build DESC").Find(&bundles).Error
 
 	return bundles, err
 }

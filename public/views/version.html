@@ -12,12 +12,12 @@
     <div class="page">
         <div class="weui-cells__title">历史版本</div>
         <div class="weui-cells">
-            {{ range $k, $v := .versions }}
-            <a class="weui-cell weui-cell_access" href="/ipapk/versions/{{ $.uuid }}/{{ $k }}">
+            {{ range .versions }}
+            <a class="weui-cell weui-cell_access" href="/ipapk/versions/{{ $.uuid }}/{{ .Version }}">
                 <div class="weui-cell__bd">
-                    <p>{{$k}}</p>
+                    <p>{{ .Version }}</p>
                 </div>
-                <div class="weui-cell__ft">{{$v}} 个构建</div>
+                <div class="weui-cell__ft">{{ .Builds }} 个构建</div>
             </a>
             {{end}}
         </div>
