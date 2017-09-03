@@ -7,7 +7,7 @@ import (
 )
 
 func formatTime(t time.Time) string {
-	return t.Format("2016-01-02 03:04:05")
+	return t.Format("2006-01-02 03:04:05")
 }
 
 func formatBinary(size int64) string {
@@ -17,4 +17,5 @@ func formatBinary(size int64) string {
 var TplFuncMap = template.FuncMap{
 	"formatTime":   formatTime,
 	"formatBinary": formatBinary,
+	"safeURL":      func(u string) template.URL { return template.URL(u) },
 }
