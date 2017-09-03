@@ -3,8 +3,8 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/labstack/gommon/log"
 	"io/ioutil"
+	"log"
 )
 
 var AppConfig *Config
