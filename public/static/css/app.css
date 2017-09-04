@@ -1,14 +1,15 @@
 .weui-media-box_appmsg .weui-media-box__hd {
-    width: 80px !important;
-    height: 80px !important;
-    line-height: 80px !important;
+    width: 90px !important;
+    height: 90px !important;
+    line-height: 90px !important;
+    margin-right: .5em !important;
 }
 .weui-media-box__hd img {
     border: 1px solid #e5e5e5;
     border-radius: 15px;
 }
 .weui-media-box__desc {
-    color: #353535 !important;
+    color: #555 !important;
 }
 .weui-btn {
     font-size: unset !important;
@@ -34,14 +35,10 @@
     border-radius:5px
 }
 .qr-wrapper {
-    margin: -35px auto 0;
+    margin: -30px auto 0;
 }
 .qr {
-    width: 190px;
-    height: 190px;
+    width: 160px;
+    height: 160px;
     margin: 0 auto;
-}
-.qr img {
-    width: 100%;
-    height: 100%;
 }
