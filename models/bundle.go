@@ -134,8 +134,8 @@ func (bundle *Bundle) GetVersions() (VersionInfo, error) {
 
 func (bundle *Bundle) GetBuilds(version string) ([]*Bundle, error) {
 	var bundles []*Bundle
-	err := orm.Where("bundle_id = ? AND version = ? AND platform_type = ?", bundle.BundleId, version, int(bundle.PlatformType))
-		.Group("build").Order("build DESC").Find(&bundles).Error
+	err := orm.Where("bundle_id = ? AND version = ? AND platform_type = ?", bundle.BundleId, version, int(bundle.PlatformType)).
+		Group("build").Order("build DESC").Find(&bundles).Error
 
 	return bundles, err
 }
