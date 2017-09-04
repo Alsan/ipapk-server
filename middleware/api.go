@@ -1,14 +1,17 @@
 package middleware
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/qr"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/phinexdaz/ipapk"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/serializers"
 	"github.com/phinexdaz/ipapk-server/utils"
-	"github.com/skip2/go-qrcode"
+	"image/png"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -84,12 +87,21 @@ func QRCode(c *gin.Context) {
 	url := location.Get(c)
 
 	data := fmt.Sprintf("%v/bundles/%v?_t=%v", url.String(), bundle.UUID, time.Now().Unix())
-	img, err := qrcode.Encode(data, qrcode.Medium, -5)
+	code, err := qr.Encode(data, qr.L, qr.Unicode)
+	if err != nil {
+		return
+	}
+	code, err = barcode.Scale(code, 160, 160)
 	if err != nil {
 		return
 	}
 
-	c.Data(http.StatusOK, "image/png", img)
+	buf := new(bytes.Buffer)
+	if err := png.Encode(buf, code); err != nil {
+		return
+	}
+
+	c.Data(http.StatusOK, "image/png", buf.Bytes())
 }
 
 func GetBundle(c *gin.Context) {
