@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/phinexdaz/ipapk"
+	"github.com/phinexdaz/ipapk-server/conf"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/serializers"
 	"github.com/phinexdaz/ipapk-server/utils"
@@ -62,8 +62,6 @@ func Upload(c *gin.Context) {
 		return
 	}
 
-	url := location.Get(c)
-
 	c.JSON(http.StatusOK, &serializers.BundleJSON{
 		UUID:       uuid,
 		Name:       bundle.Name,
@@ -71,9 +69,9 @@ func Upload(c *gin.Context) {
 		BundleId:   bundle.BundleId,
 		Version:    bundle.Version,
 		Build:      bundle.Build,
-		InstallUrl: bundle.GetInstallUrl(url.String()),
-		QRCodeUrl:  url.String() + "/qrcode/" + uuid,
-		IconUrl:    url.String() + "/icon/" + icon,
+		InstallUrl: bundle.GetInstallUrl(conf.AppConfig.ProxyURL()),
+		QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
+		IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + icon,
 		Downloads:  bundle.Downloads,
 	})
 }
@@ -86,9 +84,7 @@ func QRCode(c *gin.Context) {
 		return
 	}
 
-	url := location.Get(c)
-
-	data := fmt.Sprintf("%v/bundles/%v?_t=%v", url.String(), bundle.UUID, time.Now().Unix())
+	data := fmt.Sprintf("%v/bundles/%v?_t=%v", conf.AppConfig.ProxyURL(), bundle.UUID, time.Now().Unix())
 	code, err := qr.Encode(data, qr.L, qr.Unicode)
 	if err != nil {
 		return
@@ -127,13 +123,11 @@ func GetBundle(c *gin.Context) {
 		return
 	}
 
-	url := location.Get(c)
-
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"bundle":     bundle,
-		"installUrl": bundle.GetInstallUrl(url.String()),
-		"qrCodeUrl":  url.String() + "/qrcode/" + bundle.UUID,
-		"iconUrl":    url.String() + "/icon/" + bundle.UUID + ".png",
+		"installUrl": bundle.GetInstallUrl(conf.AppConfig.ProxyURL()),
+		"qrCodeUrl":  conf.AppConfig.ProxyURL() + "/qrcode/" + bundle.UUID,
+		"iconUrl":    conf.AppConfig.ProxyURL() + "/icon/" + bundle.UUID + ".png",
 	})
 }
 
@@ -170,8 +164,6 @@ func GetBuilds(c *gin.Context) {
 		return
 	}
 
-	url := location.Get(c)
-
 	var bundles []serializers.BundleJSON
 	for _, v := range builds {
 		bundles = append(bundles, serializers.BundleJSON{
@@ -181,9 +173,9 @@ func GetBuilds(c *gin.Context) {
 			BundleId:   v.BundleId,
 			Version:    v.Version,
 			Build:      v.Build,
-			InstallUrl: v.GetInstallUrl(url.String()),
-			QRCodeUrl:  url.String() + "/qrcode/" + uuid,
-			IconUrl:    url.String() + "/icon/" + uuid + ".png",
+			InstallUrl: v.GetInstallUrl(conf.AppConfig.ProxyURL()),
+			QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
+			IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + uuid + ".png",
 			Downloads:  v.Downloads,
 		})
 	}
@@ -205,9 +197,7 @@ func Plist(c *gin.Context) {
 		return
 	}
 
-	url := location.Get(c)
-
-	ipaUrl := url.String() + "/ipa/" + bundle.UUID
+	ipaUrl := conf.AppConfig.ProxyURL() + "/ipa/" + bundle.UUID
 
 	data, err := models.NewPlist(bundle.Name, bundle.Version, bundle.BundleId, ipaUrl).Marshall()
 	if err != nil {

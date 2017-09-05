@@ -1,7 +1,6 @@
 package templates
 
 import (
-	"fmt"
 	"github.com/dustin/go-humanize"
 	"html/template"
 	"strings"
@@ -18,7 +17,6 @@ func formatBinary(size int64) string {
 
 func formatLog(logs string) []string {
 	out := strings.Split(logs, "\\n")
-	fmt.Println(out)
 	return out
 }
 
