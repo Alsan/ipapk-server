@@ -10,5 +10,6 @@ type BundleJSON struct {
 	InstallUrl string `json:"install_url"`
 	QRCodeUrl  string `json:"qrcode_url"`
 	IconUrl    string `json:"icon_url"`
+	Changelog  string `json:"changelog"`
 	Downloads  uint64 `json:"downloads"`
 }

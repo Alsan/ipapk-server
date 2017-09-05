@@ -72,6 +72,7 @@ func Upload(c *gin.Context) {
 		InstallUrl: bundle.GetInstallUrl(conf.AppConfig.ProxyURL()),
 		QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
 		IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + icon,
+		Changelog:  bundle.ChangeLog,
 		Downloads:  bundle.Downloads,
 	})
 }
@@ -176,6 +177,7 @@ func GetBuilds(c *gin.Context) {
 			InstallUrl: v.GetInstallUrl(conf.AppConfig.ProxyURL()),
 			QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
 			IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + uuid + ".png",
+			Changelog:  bundle.ChangeLog,
 			Downloads:  v.Downloads,
 		})
 	}
