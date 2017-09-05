@@ -23,7 +23,7 @@ POST /ipapk/upload
 param:
 ```
 package:安装包文件, reqiured
-changelog:ChangeLog, optional
+changelog:ChangeLog, 仅支持\n换行, optional
 ```
 response:
 ```
