@@ -1,6 +1,4 @@
 .DS_Store
-*.png
-*.ipa
-*.apk
+data
 .idea
 *.db
