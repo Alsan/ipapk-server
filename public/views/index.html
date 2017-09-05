@@ -40,7 +40,7 @@
                     </div>
                 </div>
             </div>
-            {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 5 }}
+            {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 3 }}
             <div class="weui-panel__ft">
                 <a href="/ipapk/changelog/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">查看更多</div>
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="page__bd page__bd_spacing">
-            <a href="{{ .installUrl | safeURL }}" class="weui-btn weui-btn_plain-primary">在线安装</a>
+            <a href="{{ .installUrl | safeURL }}" class="weui-btn weui-btn_primary">在线安装</a>
             <!--<div class="weui-loadmore weui-loadmore_line">-->
                 <!--<span class="weui-loadmore__tips">或扫一扫</span>-->
             <!--</div>-->

@@ -21,8 +21,8 @@ func formatLog(logs string) []string {
 }
 
 func previewLog(logs []string) []string {
-	if len(logs) > 5 {
-		return logs[0:5]
+	if len(logs) > 3 {
+		return logs[0:3]
 	}
 	return logs
 }
