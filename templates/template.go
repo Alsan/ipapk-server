@@ -1,18 +1,21 @@
 package templates
 
 import (
-	"github.com/dustin/go-humanize"
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
+
+	"github.com/zpatrick/go-bytesize"
 )
 
 func formatTime(t time.Time) string {
-	return t.Format("2006-01-02 03:04:05")
+	return t.Format("2006-01-02 03:04")
 }
 
 func formatBinary(size int64) string {
-	return humanize.Bytes(uint64(size))
+	b := bytesize.Bytesize(size)
+	return fmt.Sprintf("%.1f MB", b.Megabytes())
 }
 
 func formatLog(logs string) []string {
