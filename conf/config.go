@@ -32,7 +32,7 @@ func (c *Config) Addr() string {
 
 func (c *Config) ProxyURL() string {
 	if c.Proxy == "" {
-		return "http://" + c.Addr() + "/ipapk"
+		return "https://" + c.Addr() + "/ipapk"
 	}
 	return c.Proxy + "/ipapk"
 }
