@@ -20,6 +20,7 @@ import (
 )
 
 func Upload(c *gin.Context) {
+	changelog := c.PostForm("changelog")
 	file, err := c.FormFile("file")
 	if err != nil {
 		return
@@ -55,6 +56,7 @@ func Upload(c *gin.Context) {
 	bundle.Version = app.Version
 	bundle.Build = app.Build
 	bundle.Size = app.Size
+	bundle.ChangeLog = changelog
 
 	if err := models.AddBundle(bundle); err != nil {
 		return
@@ -102,6 +104,19 @@ func QRCode(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "image/png", buf.Bytes())
+}
+
+func GetChangelog(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	bundle, err := models.GetBundleByUUID(uuid)
+	if err != nil {
+		return
+	}
+
+	c.HTML(http.StatusOK, "change.html", gin.H{
+		"changelog": bundle.ChangeLog,
+	})
 }
 
 func GetBundle(c *gin.Context) {

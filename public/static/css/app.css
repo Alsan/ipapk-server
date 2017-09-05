@@ -4,12 +4,18 @@
     line-height: 90px !important;
     margin-right: .5em !important;
 }
+.weui-panel__hd {
+    color: unset !important;
+}
 .weui-media-box__hd img {
     border: 1px solid #e5e5e5;
     border-radius: 20px;
 }
 .weui-media-box__desc {
-    color: #555 !important;
+    color: #777 !important;
+}
+.weui-media-box__title {
+    font-size: 13px;
 }
 .weui-btn {
     font-size: unset !important;

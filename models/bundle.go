@@ -71,6 +71,7 @@ type Bundle struct {
 	Version      string
 	Build        string
 	Size         int64
+	ChangeLog    string `gorm:"type:text"`
 	Downloads    uint64 `gorm:"default:0"`
 	CreatedAt    time.Time
 }

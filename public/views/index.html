@@ -12,6 +12,7 @@
 <div class="container">
     <div class="page">
         <div class="weui-panel weui-panel_access">
+            <div class="weui-panel__hd">应用信息</div>
             <div class="weui-panel__bd">
                 <div class="weui-media-box weui-media-box_appmsg">
                     <div class="weui-media-box__hd">
@@ -26,9 +27,29 @@
                         <p class="weui-media-box__desc">安装次数: {{.bundle.Downloads }}</p>
                     </div>
                 </div>
+                <div class="weui-media-box weui-media-box_text">
+                    <div class="weui-media-box__bd">
+                        <h4 class="weui-media-box__title">更新日志</h4>
+                        {{ if .bundle.ChangeLog }}
+                        {{ range .bundle.ChangeLog | formatLog | previewLog }}
+                        <p class="weui-media-box__desc">{{ . }}</p>
+                        {{ end }}
+                        {{ else }}
+                        <p class="weui-media-box__desc">无</p>
+                        {{ end }}
+                    </div>
+                </div>
             </div>
+            {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 5 }}
             <div class="weui-panel__ft">
-                <a href="/ipapk/versions/{{.bundle.UUID}}" class="weui-cell weui-cell_access weui-cell_link">
+                <a href="/ipapk/changelog/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
+                    <div class="weui-cell__bd">查看更多</div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+            </div>
+            {{ end }}
+            <div class="weui-panel__ft">
+                <a href="/ipapk/versions/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">历史版本</div>
                     <span class="weui-cell__ft"></span>
                 </a>
@@ -36,14 +57,14 @@
         </div>
         <div class="page__bd page__bd_spacing">
             <a href="{{ .installUrl | safeURL }}" class="weui-btn weui-btn_plain-primary">在线安装</a>
-            <div class="weui-loadmore weui-loadmore_line">
-                <span class="weui-loadmore__tips">或扫一扫</span>
-            </div>
-            <div class="qr-wrapper">
-                <div class="qr">
-                    <img src="{{ .qrCodeUrl }}">
-                </div>
-            </div>
+            <!--<div class="weui-loadmore weui-loadmore_line">-->
+                <!--<span class="weui-loadmore__tips">或扫一扫</span>-->
+            <!--</div>-->
+            <!--<div class="qr-wrapper">-->
+                <!--<div class="qr">-->
+                    <!--<img src="{{ .qrCodeUrl }}">-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div class="weui-footer weui-footer_fixed-bottom">
             <p class="weui-footer__text">Copyright &copy; ipapk</p>

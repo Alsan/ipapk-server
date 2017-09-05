@@ -15,9 +15,23 @@ import (
 	"time"
 )
 
+func initDataDirectory() {
+	directories := []string{
+		"data/app",
+		"data/icon",
+	}
+	for _, v := range directories {
+		_, err := os.Stat(v)
+		if os.IsNotExist(err) {
+			os.MkdirAll(v, 0644)
+		}
+	}
+}
+
 func main() {
 	models.InitDB()
 	conf.Init("config.json")
+	initDataDirectory()
 
 	router := gin.Default()
 	router.Use(location.New(location.Config{
@@ -32,6 +46,7 @@ func main() {
 	v1.Static("static", "public/static")
 
 	v1.POST("/upload", middleware.Upload)
+	v1.GET("/changelog/:uuid", middleware.GetChangelog)
 	v1.GET("/qrcode/:uuid", middleware.QRCode)
 	v1.GET("/plist/:uuid", middleware.Plist)
 	v1.GET("/ipa/:uuid", middleware.DownloadIPA)

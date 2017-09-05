@@ -1,8 +1,10 @@
 package templates
 
 import (
+	"fmt"
 	"github.com/dustin/go-humanize"
 	"html/template"
+	"strings"
 	"time"
 )
 
@@ -14,8 +16,23 @@ func formatBinary(size int64) string {
 	return humanize.Bytes(uint64(size))
 }
 
+func formatLog(logs string) []string {
+	out := strings.Split(logs, "\\n")
+	fmt.Println(out)
+	return out
+}
+
+func previewLog(logs []string) []string {
+	if len(logs) > 5 {
+		return logs[0:5]
+	}
+	return logs
+}
+
 var TplFuncMap = template.FuncMap{
 	"formatTime":   formatTime,
 	"formatBinary": formatBinary,
 	"safeURL":      func(u string) template.URL { return template.URL(u) },
+	"formatLog":    formatLog,
+	"previewLog":   previewLog,
 }
