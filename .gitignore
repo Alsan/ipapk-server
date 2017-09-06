@@ -1,4 +1,5 @@
 .DS_Store
-data
+.data
 .idea
 *.db
+release

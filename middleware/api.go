@@ -32,7 +32,7 @@ func Upload(c *gin.Context) {
 	}
 
 	uuid := utils.NewUUID()
-	filename := filepath.Join("data", "app", uuid+string(ext.PlatformType().Extention()))
+	filename := filepath.Join(".data", "app", uuid+string(ext.PlatformType().Extention()))
 
 	if err := c.SaveUploadedFile(file, filename); err != nil {
 		return
@@ -44,7 +44,7 @@ func Upload(c *gin.Context) {
 	}
 
 	icon := uuid + ".png"
-	if err := utils.SaveIcon(app.Icon, filepath.Join("data", "icon", icon)); err != nil {
+	if err := utils.SaveIcon(app.Icon, filepath.Join(".data", "icon", icon)); err != nil {
 		return
 	}
 
@@ -222,7 +222,7 @@ func DownloadIPA(c *gin.Context) {
 	}
 
 	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join("data", "app", filename))
+	file, err := ioutil.ReadFile(filepath.Join(".data", "app", filename))
 	if err != nil {
 		return
 	}
@@ -247,7 +247,7 @@ func DownloadAPK(c *gin.Context) {
 	}
 
 	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join("data", "app", filename))
+	file, err := ioutil.ReadFile(filepath.Join(".data", "app", filename))
 	if err != nil {
 		return
 	}

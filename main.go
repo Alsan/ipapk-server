@@ -17,8 +17,8 @@ import (
 
 func initDataDirectory() {
 	directories := []string{
-		"data/app",
-		"data/icon",
+		".data/app",
+		".data/icon",
 	}
 	for _, v := range directories {
 		_, err := os.Stat(v)
@@ -42,7 +42,7 @@ func main() {
 	router.LoadHTMLGlob("public/views/*")
 
 	v1 := router.Group("/ipapk")
-	v1.Static("icon", "data/icon")
+	v1.Static("icon", ".data/icon")
 	v1.Static("static", "public/static")
 
 	v1.POST("/upload", middleware.Upload)
