@@ -1,13 +1,13 @@
 package main
 
 import (
-	"context"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/phinexdaz/ipapk-server/conf"
 	"github.com/phinexdaz/ipapk-server/middleware"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/templates"
+	"golang.org/x/net/context"
 	"log"
 	"net/http"
 	"os"
