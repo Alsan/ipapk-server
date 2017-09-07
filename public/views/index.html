@@ -37,17 +37,16 @@
                         {{ else }}
                         <p class="weui-media-box__desc">无</p>
                         {{ end }}
+                        {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 3 }}
+                        <ul class="weui-media-box__info">
+                            <li class="weui-media-box__info__meta">
+                                <a href="/log/{{ .bundle.UUID }}" class="weui-media-box__info__meta__link">查看更多...</a>
+                            </li>
+                        </ul>
+                        {{ end }}
                     </div>
                 </div>
             </div>
-            {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 3 }}
-            <div class="weui-panel__ft">
-                <a href="/log/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
-                    <div class="weui-cell__bd">查看更多</div>
-                    <span class="weui-cell__ft"></span>
-                </a>
-            </div>
-            {{ end }}
             <div class="weui-panel__ft">
                 <a href="/version/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">历史版本</div>
@@ -67,10 +66,7 @@
             <!--</div>-->
         </div>
         <div class="weui-footer weui-footer_fixed-bottom">
-            <p class="weui-footer__links">
-                <a href="/install.cer" class="weui-footer__link">安装证书</a>
-            </p>
-            <p class="weui-footer__text">Copyright &copy; ipapk</p>
+            <p class="weui-footer__text">Copyright &copy; ipapk |<a href="/install.cer" class="weui-footer__link">安装证书</a></p>
         </div>
     </div>
 </div>

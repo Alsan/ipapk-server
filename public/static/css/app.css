@@ -6,6 +6,10 @@
 }
 .weui-panel__hd {
     color: unset !important;
+    font-size: 14px;
+}
+.weui-panel__hd:after, .weui-media-box:before, .weui-cell:before {
+    left: 0 !important;
 }
 .weui-media-box__hd img {
     border: 1px solid #e5e5e5;
@@ -14,8 +18,12 @@
 .weui-media-box__desc {
     color: #777 !important;
 }
-.weui-media-box__title {
+.weui-media-box__info__meta__link {
+    color: #586c94;
     font-size: 13px;
+}
+.weui-media-box__title {
+    font-size: 14px;
 }
 .weui-btn {
     font-size: unset !important;
