@@ -5,7 +5,7 @@ PLATFORMS := windows linux darwin
 .PHONY: $(PLATFORMS)
 $(PLATFORMS):
 	mkdir -p release
-	CGO_ENABLED=0 GO15VENDOREXPERIMENT=1 GOOS=$@ GOARCH=amd64 go build -ldflags "-X main.version=$(VERSION)" -o release/$(BINARY)-$(VERSION)-$@-amd64
+	CGO_ENABLED=1 GO15VENDOREXPERIMENT=1 GOOS=$@ GOARCH=amd64 go build -ldflags "-X main.version=$(VERSION)" -o release/$(BINARY)-$(VERSION)-$@-amd64
 
 .PHONY: release
 release: windows linux darwin

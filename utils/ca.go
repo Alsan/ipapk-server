@@ -2,8 +2,8 @@ package utils
 
 import (
 	"net"
-	"os/exec"
 	"os"
+	"os/exec"
 )
 
 func LocalIP() (net.IP, error) {
@@ -25,7 +25,7 @@ func InitCA() error {
 	}
 	_, err = os.Stat(".ca")
 	if os.IsNotExist(err) {
-		cmd := exec.Command("/bin/sh", "certificate", ip.String())
+		cmd := exec.Command("/bin/sh", "certificate.sh", ip.String())
 		_, err = cmd.Output()
 		if err != nil {
 			return err
