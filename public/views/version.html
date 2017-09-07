@@ -13,7 +13,7 @@
         <div class="weui-cells__title">历史版本</div>
         <div class="weui-cells">
             {{ range .versions }}
-            <a class="weui-cell weui-cell_access" href="/ipapk/versions/{{ $.uuid }}/{{ .Version }}">
+            <a class="weui-cell weui-cell_access" href="/version/{{ $.uuid }}/{{ .Version }}">
                 <div class="weui-cell__bd">
                     <p>{{ .Version }}</p>
                 </div>

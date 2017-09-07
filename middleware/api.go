@@ -10,7 +10,7 @@ import (
 	"github.com/phinexdaz/ipapk-server/conf"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/serializers"
-	"github.com/phinexdaz/ipapk-server/utils"
+	"github.com/satori/go.uuid"
 	"image/png"
 	"io/ioutil"
 	"net/http"
@@ -31,8 +31,8 @@ func Upload(c *gin.Context) {
 		return
 	}
 
-	uuid := utils.NewUUID()
-	filename := filepath.Join(".data", "app", uuid+string(ext.PlatformType().Extention()))
+	_uuid := uuid.NewV4().String()
+	filename := filepath.Join(".data", _uuid+string(ext.PlatformType().Extention()))
 
 	if err := c.SaveUploadedFile(file, filename); err != nil {
 		return
@@ -43,19 +43,20 @@ func Upload(c *gin.Context) {
 		return
 	}
 
-	icon := uuid + ".png"
-	if err := utils.SaveIcon(app.Icon, filepath.Join(".data", "icon", icon)); err != nil {
+	iconBuffer := new(bytes.Buffer)
+	if err := png.Encode(iconBuffer, app.Icon); err != nil {
 		return
 	}
 
 	bundle := new(models.Bundle)
-	bundle.UUID = uuid
+	bundle.UUID = _uuid
 	bundle.PlatformType = ext.PlatformType()
 	bundle.Name = app.Name
 	bundle.BundleId = app.BundleId
 	bundle.Version = app.Version
 	bundle.Build = app.Build
 	bundle.Size = app.Size
+	bundle.Icon = iconBuffer.Bytes()
 	bundle.ChangeLog = changelog
 
 	if err := models.AddBundle(bundle); err != nil {
@@ -63,29 +64,29 @@ func Upload(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &serializers.BundleJSON{
-		UUID:       uuid,
+		UUID:       _uuid,
 		Name:       bundle.Name,
 		Platform:   bundle.PlatformType.String(),
 		BundleId:   bundle.BundleId,
 		Version:    bundle.Version,
 		Build:      bundle.Build,
 		InstallUrl: bundle.GetInstallUrl(conf.AppConfig.ProxyURL()),
-		QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
-		IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + icon,
+		QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + _uuid,
+		IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + _uuid,
 		Changelog:  bundle.ChangeLog,
 		Downloads:  bundle.Downloads,
 	})
 }
 
-func QRCode(c *gin.Context) {
-	uuid := c.Param("uuid")
+func GetQRCode(c *gin.Context) {
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
 
-	data := fmt.Sprintf("%v/bundles/%v?_t=%v", conf.AppConfig.ProxyURL(), bundle.UUID, time.Now().Unix())
+	data := fmt.Sprintf("%v/bundle/%v?_t=%v", conf.AppConfig.ProxyURL(), bundle.UUID, time.Now().Unix())
 	code, err := qr.Encode(data, qr.L, qr.Unicode)
 	if err != nil {
 		return
@@ -103,10 +104,21 @@ func QRCode(c *gin.Context) {
 	c.Data(http.StatusOK, "image/png", buf.Bytes())
 }
 
-func GetChangelog(c *gin.Context) {
-	uuid := c.Param("uuid")
+func GetIcon(c *gin.Context) {
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
+	if err != nil {
+		return
+	}
+
+	c.Data(http.StatusOK, "image/png", bundle.Icon)
+}
+
+func GetChangelog(c *gin.Context) {
+	_uuid := c.Param("uuid")
+
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -117,9 +129,9 @@ func GetChangelog(c *gin.Context) {
 }
 
 func GetBundle(c *gin.Context) {
-	uuid := c.Param("uuid")
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -128,14 +140,14 @@ func GetBundle(c *gin.Context) {
 		"bundle":     bundle,
 		"installUrl": bundle.GetInstallUrl(conf.AppConfig.ProxyURL()),
 		"qrCodeUrl":  conf.AppConfig.ProxyURL() + "/qrcode/" + bundle.UUID,
-		"iconUrl":    conf.AppConfig.ProxyURL() + "/icon/" + bundle.UUID + ".png",
+		"iconUrl":    conf.AppConfig.ProxyURL() + "/icon/" + bundle.UUID,
 	})
 }
 
 func GetVersions(c *gin.Context) {
-	uuid := c.Param("uuid")
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -152,10 +164,10 @@ func GetVersions(c *gin.Context) {
 }
 
 func GetBuilds(c *gin.Context) {
-	uuid := c.Param("uuid")
+	_uuid := c.Param("uuid")
 	version := c.Param("ver")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -175,8 +187,8 @@ func GetBuilds(c *gin.Context) {
 			Version:    v.Version,
 			Build:      v.Build,
 			InstallUrl: v.GetInstallUrl(conf.AppConfig.ProxyURL()),
-			QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + uuid,
-			IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + uuid + ".png",
+			QRCodeUrl:  conf.AppConfig.ProxyURL() + "/qrcode/" + v.UUID,
+			IconUrl:    conf.AppConfig.ProxyURL() + "/icon/" + v.UUID,
 			Changelog:  bundle.ChangeLog,
 			Downloads:  v.Downloads,
 		})
@@ -187,10 +199,10 @@ func GetBuilds(c *gin.Context) {
 	})
 }
 
-func Plist(c *gin.Context) {
-	uuid := c.Param("uuid")
+func GetPlist(c *gin.Context) {
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -210,9 +222,9 @@ func Plist(c *gin.Context) {
 }
 
 func DownloadIPA(c *gin.Context) {
-	uuid := c.Param("uuid")
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -222,7 +234,7 @@ func DownloadIPA(c *gin.Context) {
 	}
 
 	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join(".data", "app", filename))
+	file, err := ioutil.ReadFile(filepath.Join(".data", filename))
 	if err != nil {
 		return
 	}
@@ -235,9 +247,9 @@ func DownloadIPA(c *gin.Context) {
 }
 
 func DownloadAPK(c *gin.Context) {
-	uuid := c.Param("uuid")
+	_uuid := c.Param("uuid")
 
-	bundle, err := models.GetBundleByUUID(uuid)
+	bundle, err := models.GetBundleByUID(_uuid)
 	if err != nil {
 		return
 	}
@@ -247,7 +259,7 @@ func DownloadAPK(c *gin.Context) {
 	}
 
 	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join(".data", "app", filename))
+	file, err := ioutil.ReadFile(filepath.Join(".data", filename))
 	if err != nil {
 		return
 	}

@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/phinexdaz/ipapk-server/conf"
 	"github.com/phinexdaz/ipapk-server/middleware"
 	"github.com/phinexdaz/ipapk-server/models"
 	"github.com/phinexdaz/ipapk-server/templates"
+	"github.com/phinexdaz/ipapk-server/utils"
 	"log"
 	"net/http"
 	"os"
@@ -15,45 +15,45 @@ import (
 	"time"
 )
 
-func initDataDirectory() {
-	directories := []string{
-		".data/app",
-		".data/icon",
+func Init() {
+	_, err := os.Stat(".data")
+	if os.IsNotExist(err) {
+		os.MkdirAll(".data", 0755)
 	}
-	for _, v := range directories {
-		_, err := os.Stat(v)
-		if os.IsNotExist(err) {
-			os.MkdirAll(v, 0644)
-		}
+
+	if err := utils.InitCA(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := models.InitDB(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := conf.InitConfig("config.json"); err != nil {
+		log.Fatal(err)
 	}
 }
 
 func main() {
-	models.InitDB()
-	conf.Init("config.json")
-	initDataDirectory()
+	Init()
 
 	router := gin.Default()
-	router.Use(location.New(location.Config{
-		Scheme: "http",
-		Base:   "/ipapk",
-	}))
 	router.SetFuncMap(templates.TplFuncMap)
 	router.LoadHTMLGlob("public/views/*")
 
-	v1 := router.Group("/ipapk")
-	v1.Static("icon", ".data/icon")
-	v1.Static("static", "public/static")
+	router.Static("static", "public/static")
+	router.StaticFile("install.cer", ".ca/install.cer")
 
-	v1.POST("/upload", middleware.Upload)
-	v1.GET("/changelog/:uuid", middleware.GetChangelog)
-	v1.GET("/qrcode/:uuid", middleware.QRCode)
-	v1.GET("/plist/:uuid", middleware.Plist)
-	v1.GET("/ipa/:uuid", middleware.DownloadIPA)
-	v1.GET("/apk/:uuid", middleware.DownloadAPK)
-	v1.GET("/bundles/:uuid", middleware.GetBundle)
-	v1.GET("/versions/:uuid", middleware.GetVersions)
-	v1.GET("/versions/:uuid/:ver", middleware.GetBuilds)
+	router.POST("/upload", middleware.Upload)
+	router.GET("/bundle/:uuid", middleware.GetBundle)
+	router.GET("/log/:uuid", middleware.GetChangelog)
+	router.GET("/qrcode/:uuid", middleware.GetQRCode)
+	router.GET("/icon/:uuid", middleware.GetIcon)
+	router.GET("/plist/:uuid", middleware.GetPlist)
+	router.GET("/ipa/:uuid", middleware.DownloadIPA)
+	router.GET("/apk/:uuid", middleware.DownloadAPK)
+	router.GET("/version/:uuid", middleware.GetVersions)
+	router.GET("/version/:uuid/:ver", middleware.GetBuilds)
 
 	srv := &http.Server{
 		Addr:    conf.AppConfig.Addr(),
@@ -61,7 +61,7 @@ func main() {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
+		if err := srv.ListenAndServeTLS(".ca/server.cer", ".ca/server.key"); err != nil {
 			log.Printf("listen: %v\n", err)
 		}
 	}()

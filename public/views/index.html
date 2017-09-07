@@ -6,7 +6,7 @@
     <title>内测应用分发服务</title>
     <!-- 引入 WeUI -->
     <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"/>
-    <link rel="stylesheet" href="/ipapk/static/css/app.min.css">
+    <link rel="stylesheet" href="/static/css/app.min.css">
 </head>
 <body>
 <div class="container">
@@ -42,14 +42,14 @@
             </div>
             {{ if gt ( len ( .bundle.ChangeLog | formatLog ) ) 3 }}
             <div class="weui-panel__ft">
-                <a href="/ipapk/changelog/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
+                <a href="/log/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">查看更多</div>
                     <span class="weui-cell__ft"></span>
                 </a>
             </div>
             {{ end }}
             <div class="weui-panel__ft">
-                <a href="/ipapk/versions/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
+                <a href="/version/{{ .bundle.UUID }}" class="weui-cell weui-cell_access weui-cell_link">
                     <div class="weui-cell__bd">历史版本</div>
                     <span class="weui-cell__ft"></span>
                 </a>
@@ -67,6 +67,9 @@
             <!--</div>-->
         </div>
         <div class="weui-footer weui-footer_fixed-bottom">
+            <p class="weui-footer__links">
+                <a href="/install.cer" class="weui-footer__link">安装证书</a>
+            </p>
             <p class="weui-footer__text">Copyright &copy; ipapk</p>
         </div>
     </div>

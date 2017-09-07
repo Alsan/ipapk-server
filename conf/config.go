@@ -3,8 +3,8 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/phinexdaz/ipapk-server/utils"
 	"io/ioutil"
-	"log"
 )
 
 var AppConfig *Config
@@ -15,15 +15,16 @@ type Config struct {
 	Proxy string `json:"proxy"`
 }
 
-func Init(filename string) {
+func InitConfig(filename string) error {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if err := json.Unmarshal(data, &AppConfig); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
 func (c *Config) Addr() string {
@@ -32,7 +33,11 @@ func (c *Config) Addr() string {
 
 func (c *Config) ProxyURL() string {
 	if c.Proxy == "" {
-		return "https://" + c.Addr() + "/ipapk"
+		localIp, err := utils.LocalIP()
+		if err != nil {
+			panic(err)
+		}
+		return fmt.Sprintf("https://%v:%v", localIp.String(), c.Port)
 	}
-	return c.Proxy + "/ipapk"
+	return c.Proxy
 }

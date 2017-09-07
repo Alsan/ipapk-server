@@ -71,6 +71,7 @@ type Bundle struct {
 	Version      string
 	Build        string
 	Size         int64
+	Icon         []byte
 	ChangeLog    string `gorm:"type:text"`
 	Downloads    uint64 `gorm:"default:0"`
 	CreatedAt    time.Time
@@ -80,7 +81,7 @@ func AddBundle(bundle *Bundle) error {
 	return orm.Create(bundle).Error
 }
 
-func GetBundleByUUID(uuid string) (*Bundle, error) {
+func GetBundleByUID(uuid string) (*Bundle, error) {
 	var bundle Bundle
 
 	err := orm.Where("uuid = ?", uuid).Find(&bundle).Error
