@@ -42,7 +42,7 @@ func main() {
 	router.LoadHTMLGlob("public/views/*")
 
 	router.Static("static", "public/static")
-	router.StaticFile("install.cer", ".ca/install.cer")
+	router.StaticFile("myCA.cer", ".ca/myCA.cer")
 
 	router.POST("/upload", middleware.Upload)
 	router.GET("/bundle/:uuid", middleware.GetBundle)
@@ -61,7 +61,7 @@ func main() {
 	}
 
 	go func() {
-		if err := srv.ListenAndServeTLS(".ca/server.cer", ".ca/server.key"); err != nil {
+		if err := srv.ListenAndServeTLS(".ca/mycert1.cer", ".ca/mycert1.key"); err != nil {
 			log.Printf("listen: %v\n", err)
 		}
 	}()
