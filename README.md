@@ -2,6 +2,19 @@
 ==============
 IPA、APK内测应用分发服务，纯 golang 开发
 
+# 支持
+- Linux
+- Mac OSX
+
+# 编译
+```sh
+go get github.com/phinexdaz/ipapk-server
+# for linux
+make linux
+# for mac
+make darwin
+```
+
 # 用法
 ## 配置文件
 ```json
