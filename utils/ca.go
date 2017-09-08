@@ -42,12 +42,12 @@ func InitCA() error {
 func createPrivateCA(certificateAuthorityName string) error {
 	_, err := callCommand("openssl", "genrsa", "-out", ".ca/myCA.key", "2048")
 	if err != nil {
-		errors.New("Could not create private CA key")
+		errors.New("could not create private CA key")
 	}
 
 	_, err = callCommand("openssl", "req", "-x509", "-new", "-key", ".ca/myCA.key", "-out", ".ca/myCA.cer", "-days", "730", "-subj", "/CN="+certificateAuthorityName)
 	if err != nil {
-		errors.New("Could not create private CA certificate")
+		errors.New("could not create private CA certificate")
 	}
 	return nil
 }
@@ -55,20 +55,17 @@ func createPrivateCA(certificateAuthorityName string) error {
 func createServerCertKey(host string) error {
 	_, err := callCommand("openssl", "genrsa", "-out", ".ca/mycert1.key", "2048")
 	if err != nil {
-		errors.New("Could not create private server key")
+		errors.New("could not create private server key")
 	}
 
-	_, err = callCommand("openssl", "req", "-new", "-out", ".ca/mycert1.req",
-		"-key", ".ca/mycert1.key", "-subj", "/CN="+host)
+	_, err = callCommand("openssl", "req", "-new", "-out", ".ca/mycert1.req", "-key", ".ca/mycert1.key", "-subj", "/CN="+host)
 	if err != nil {
-		errors.New("Could not create private server certificate signing request")
+		errors.New("could not create private server certificate signing request")
 	}
 
-	_, err = callCommand("openssl", "x509", "-req", "-in", ".ca/mycert1.req",
-		"-out", ".ca/mycert1.cer", "-CAkey", ".ca/myCA.key", "-CA", ".ca/myCA.cer",
-		"-days", "365", "-CAcreateserial", "-CAserial", ".ca/serial")
+	_, err = callCommand("openssl", "x509", "-req", "-in", ".ca/mycert1.req", "-out", ".ca/mycert1.cer", "-CAkey", ".ca/myCA.key", "-CA", ".ca/myCA.cer", "-days", "365", "-CAcreateserial", "-CAserial", ".ca/serial")
 	if err != nil {
-		errors.New("Could not create private server certificate")
+		errors.New("could not create private server certificate")
 	}
 	return nil
 }
