@@ -1,5 +1,5 @@
 {
   "host": "127.0.0.1",
   "port": "8080",
-  "proxy": "https://127.0.0.1:8080"
+  "database": "username:password@tcp(127.0.0.1:3306)/ipapk?charset=utf8&parseTime=true&loc=Local"
 }

@@ -10,9 +10,10 @@ import (
 var AppConfig *Config
 
 type Config struct {
-	Host  string `json:"host"`
-	Port  string `json:"port"`
-	Proxy string `json:"proxy"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Proxy    string `json:"proxy"`
+	Database string `json:"database"`
 }
 
 func InitConfig(filename string) error {
