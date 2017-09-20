@@ -12,10 +12,8 @@ import (
 	"github.com/phinexdaz/ipapk-server/serializers"
 	"github.com/satori/go.uuid"
 	"image/png"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
-	"strconv"
 	"time"
 )
 
@@ -221,7 +219,7 @@ func GetPlist(c *gin.Context) {
 	c.Data(http.StatusOK, "application/x-plist", data)
 }
 
-func DownloadIPA(c *gin.Context) {
+func DownloadAPP(c *gin.Context) {
 	_uuid := c.Param("uuid")
 
 	bundle, err := models.GetBundleByUID(_uuid)
@@ -229,44 +227,8 @@ func DownloadIPA(c *gin.Context) {
 		return
 	}
 
-	if bundle.PlatformType != models.BundlePlatformTypeIOS {
-		return
-	}
-
-	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join(".data", filename))
-	if err != nil {
-		return
-	}
-
 	bundle.UpdateDownload()
 
-	c.Header("Content-Disposition", "attachment;filename="+filename)
-	c.Header("Content-Length", strconv.Itoa(int(bundle.Size)))
-	c.Data(http.StatusOK, "application/octet-stream", file)
-}
-
-func DownloadAPK(c *gin.Context) {
-	_uuid := c.Param("uuid")
-
-	bundle, err := models.GetBundleByUID(_uuid)
-	if err != nil {
-		return
-	}
-
-	if bundle.PlatformType != models.BundlePlatformTypeAndroid {
-		return
-	}
-
-	filename := bundle.UUID + string(bundle.PlatformType.Extention())
-	file, err := ioutil.ReadFile(filepath.Join(".data", filename))
-	if err != nil {
-		return
-	}
-
-	bundle.UpdateDownload()
-
-	c.Header("Content-Disposition", "attachment;filename="+filename)
-	c.Header("Content-Length", strconv.Itoa(int(bundle.Size)))
-	c.Data(http.StatusOK, "application/vnd.android.package-archive", file)
+	downloadUrl := conf.AppConfig.ProxyURL() + "/app/" + bundle.UUID + string(bundle.PlatformType.Extention())
+	c.Redirect(http.StatusMovedPermanently, downloadUrl)
 }

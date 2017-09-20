@@ -25,11 +25,11 @@ func Init() {
 		log.Fatal(err)
 	}
 
-	if err := models.InitDB(); err != nil {
+	if err := conf.InitConfig("config.json"); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := conf.InitConfig("config.json"); err != nil {
+	if err := models.InitDB(); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -41,6 +41,7 @@ func main() {
 	router.SetFuncMap(templates.TplFuncMap)
 	router.LoadHTMLGlob("public/views/*")
 
+	router.Static("app", ".data")
 	router.Static("static", "public/static")
 	router.StaticFile("myCA.cer", ".ca/myCA.cer")
 
@@ -50,8 +51,8 @@ func main() {
 	router.GET("/qrcode/:uuid", middleware.GetQRCode)
 	router.GET("/icon/:uuid", middleware.GetIcon)
 	router.GET("/plist/:uuid", middleware.GetPlist)
-	router.GET("/ipa/:uuid", middleware.DownloadIPA)
-	router.GET("/apk/:uuid", middleware.DownloadAPK)
+	router.GET("/ipa/:uuid", middleware.DownloadAPP)
+	router.GET("/apk/:uuid", middleware.DownloadAPP)
 	router.GET("/version/:uuid", middleware.GetVersions)
 	router.GET("/version/:uuid/:ver", middleware.GetBuilds)
 
